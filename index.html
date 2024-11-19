@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.IO Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <h1>Chat em Tempo Real</h1>
+    <input id="message" placeholder="Digite sua mensagem" />
+    <button id="send">Enviar</button>
+    <ul id="messages"></ul>
+
+    <script>
+        const socket = io('http://localhost:3000', {
+            query: { token: 'GabisAmanda' } // Substitua 'meu-token-secreto' pelo token correto
+        });
+
+        const sendButton = document.getElementById('send');
+        const messageInput = document.getElementById('message');
+        const messages = document.getElementById('messages');
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            socket.emit('message', message);
+            messageInput.value = '';
+        });
+
+        socket.on('chat-message', (data) => {
+            const li = document.createElement('li');
+            li.textContent = `${data.from}: ${data.message}`;
+            messages.appendChild(li);
+        });
+
+        socket.on('connect', () => {
+            console.log('Conectado com sucesso!');
+        });
+
+        socket.on('connect_error', (err) => {
+            console.log('Erro ao conectar:', err.message);
+        });
+
+
+    </script>
+</body>
+
+</html>
